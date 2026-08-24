@@ -46,6 +46,9 @@ const keys = {
     },
     d: {
         pressed: false
+    },
+    shift: {
+        pressed: false
     }
 }
 
@@ -64,7 +67,17 @@ function animate () {
         playerDown.height
     )
 
-    if (keys.w.pressed && keys.a.pressed) background.position.x = background.position.x + 2, background.position.y = background.position.y + 2
+    //Running
+    if (keys.shift.pressed && keys.w.pressed && keys.a.pressed) background.position.x = background.position.x + 4, background.position.y = background.position.y + 4
+    else if (keys.shift.pressed && keys.w.pressed && keys.d.pressed) background.position.x = background.position.x - 4, background.position.y = background.position.y + 4
+    else if (keys.shift.pressed && keys.s.pressed && keys.a.pressed) background.position.x = background.position.x + 4, background.position.y = background.position.y - 4
+    else if (keys.shift.pressed && keys.s.pressed && keys.d.pressed) background.position.x = background.position.x - 4, background.position.y = background.position.y - 4
+    else if (keys.shift.pressed && keys.w.pressed) background.position.y = background.position.y + 6
+    else if (keys.shift.pressed && keys.a.pressed) background.position.x = background.position.x + 6
+    else if (keys.shift.pressed && keys.s.pressed) background.position.y = background.position.y - 6
+    else if (keys.shift.pressed && keys.d.pressed) background.position.x = background.position.x - 6
+    // Walking
+    else if (keys.w.pressed && keys.a.pressed) background.position.x = background.position.x + 2, background.position.y = background.position.y + 2
     else if (keys.w.pressed && keys.d.pressed) background.position.x = background.position.x - 2, background.position.y = background.position.y + 2
     else if (keys.s.pressed && keys.a.pressed) background.position.x = background.position.x + 2, background.position.y = background.position.y - 2
     else if (keys.s.pressed && keys.d.pressed) background.position.x = background.position.x - 2, background.position.y = background.position.y - 2
@@ -76,36 +89,42 @@ function animate () {
 animate()
 
 window.addEventListener("keydown", (e) => {
-    switch (e.key) {
-        case "w":
+    switch (e.code) {
+        case "KeyW":
             keys.w.pressed = true
         break
-        case "a":
+        case "KeyA":
             keys.a.pressed = true
         break
-        case "s":
+        case "KeyS":
             keys.s.pressed = true
         break
-        case "d":
+        case "KeyD":
             keys.d.pressed = true
+        break
+        case "ShiftLeft":
+            keys.shift.pressed = true
         break
     }
     console.log(keys)
 })
 
 window.addEventListener("keyup", (e) => {
-    switch (e.key) {
-        case "w":
+    switch (e.code) {
+        case "KeyW":
             keys.w.pressed = false
         break
-        case "a":
+        case "KeyA":
             keys.a.pressed = false
         break
-        case "s":
+        case "KeyS":
             keys.s.pressed = false
         break
-        case "d":
+        case "KeyD":
             keys.d.pressed = false
+        break
+        case "ShiftLeft":
+            keys.shift.pressed = false
         break
     }
 })
