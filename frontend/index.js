@@ -9,8 +9,6 @@ let c = canvas.getContext("2d")
 
 /* LOAD MAP */
 
-let map
-
 async function loadMap() {
     const response = await fetch("./maps/TinyHeroesMap.tmj")
     const map = await response.json()
@@ -23,8 +21,23 @@ async function loadMap() {
     }
 
     const layer = map.layers.find(grassLayer)
+    const tilesets = map.tilesets
 
     console.log(layer)
+
+    function findTileset(gid) {
+
+    let bestCandidate
+
+    tilesets.forEach((tileset)=> {
+
+        if (gid >= tileset.firstgid) {
+            bestCandidate = tileset
+        }
+    })
+        console.log(bestCandidate)
+        return bestCandidate
+    }
 
     //Gå igennem hver værdi i layer.data
     layer.data.forEach((gid, index) => {
@@ -36,17 +49,17 @@ async function loadMap() {
         const tileX = index % map.width
         const tileY = Math.floor(index / map.width)
 
+        //Hvor tilen skal tegnes
         const pixelX = tileX * map.tilewidth
         const pixelY = tileY * map.tileheight
 
+        //Hvilke tiles som skal tegnes
+        const tileset = findTileset(gid)
+        console.log(tileset)
+
+        const localId = gid - tileset.firstgid
+        console.log(localId)
     })
-
-    function findTileset(gid) {
-        return firstgid >= 0
-    }
-
-    const tileset = map.tileset(findTileset)
-
 
 }
 
