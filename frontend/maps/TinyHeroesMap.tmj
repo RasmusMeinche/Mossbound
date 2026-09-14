@@ -536,7 +536,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"Terrain 1 - Tiny Swords.tsx"
+         "source":"Terrain.tsx"
         }, 
         {
          "firstgid":55,

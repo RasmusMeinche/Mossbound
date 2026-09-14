@@ -7,6 +7,9 @@ canvas.height = window.innerHeight
 
 let c = canvas.getContext("2d")
 
+let cameraX = 0
+let cameraY = 0
+
 /* LOAD MAP */
 
 async function loadMap() {
@@ -19,8 +22,6 @@ async function loadMap() {
             const tilesetSource = await fetch("./tileset/" + tileset.source)
             const response = await tilesetSource.text()
 
-            console.log(response)
-
             //Konverterer raw input data til et format javaScript kan læse
             const parser = new DOMParser()
             const xml = parser.parseFromString(response, "text/xml")
@@ -28,7 +29,6 @@ async function loadMap() {
             const tilesetElement = xml.querySelector("tileset")
             const columns = tilesetElement.getAttribute("columns")
             const columnNumber = Number(columns)
-            console.log(tilesetElement)
 
             const tileWidth = Number(tilesetElement.getAttribute("tilewidth"))
             const tileHeight = Number(tilesetElement.getAttribute("tileheight"))
@@ -41,12 +41,6 @@ async function loadMap() {
         return {columnNumber, tileWidth, tileHeight, resolvedImageSource}
     }
 
-    //Finder Grass inde i map arrayet
-    function grassLayer (layer) {
-        return layer.name === "Grass"
-    }
-
-    const layer = map.layers.find(grassLayer)
     const tilesets = map.tilesets
 
     function findTileset(gid) {
@@ -82,6 +76,8 @@ async function loadMap() {
         )
     }
 
+
+    for (const layer of map.layers) {
     //Gå igennem hver værdi i layer.data
     layer.data.forEach((gid, index) => {
 
@@ -96,9 +92,11 @@ async function loadMap() {
         const pixelX = tileX * map.tilewidth
         const pixelY = tileY * map.tileheight
 
+        const screenX = pixelX - cameraX
+        const screenY = pixelY - cameraY
+
         //Hvilke tiles som skal tegnes
         const tileset = findTileset(gid)
-        console.log(tileset)
 
         const localId = gid - tileset.firstgid
 
@@ -118,12 +116,14 @@ async function loadMap() {
             sourcePixelY,
             loadedTileset.tileWidth,
             loadedTileset.tileHeight,
-            pixelX,
-            pixelY,
+            screenX,
+            screenY,
             loadedTileset.tileWidth,
             loadedTileset.tileHeight
         )
     })
+
+    }
 
 }
 
