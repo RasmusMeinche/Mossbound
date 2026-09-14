@@ -1,50 +1,8 @@
-let canvas = document.querySelector("canvas");
-
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
-
-let c = canvas.getContext("2d")
-
-/* const desertMap = new Image()
-desertMap.src = "./images/worlds/DesertTileset.png" */
-
-async function loadMap() {
-    const response = await fetch("./maps/TinyHeroesMap.tmj")
-    const map = await response.json()
-
-    console.log(map)
-}
-
-loadMap()
-
-function drawLayer(layer) {
-    layer.chunks.forEach(chunk => {
-        chunk.data.forEach((gid, index) => {
-
-            if (gid === 0) return
-
-            const localX = index % chunk.width
-            const localY = Math.floor(index / chunk.width)
-
-            const tileX = chunk.x + localX
-            const tileY = chunk.y + localY
-
-            const pixelX = tileX * 64
-            const pixelY = tileY * 64
-
-            console.log(gid, pixelX, pixelY)
-        })
-    })
-}
-
-
-
-
-
-
-
 const playerDown = new Image()
 playerDown.src = "./images/playerMovement/PlayerSpriteDown.png"
+
+export let playerX = 1000
+export let playerY = 800
 
 class Sprite {
     constructor({
@@ -59,14 +17,6 @@ class Sprite {
         c.drawImage(this.image, this.position.x, this.position.y)
     }
 }
-
-/* const background = new Sprite({
-    position: {
-    x: -2000,
-    y: -2000
-    },
-    image: desertMap
-}) */
 
 const keys = {
     w: {
@@ -88,7 +38,6 @@ const keys = {
 
 function animate () {
     window.requestAnimationFrame(animate)
-/*     background.draw() */
     c.drawImage(
         playerDown,
         0,
@@ -115,12 +64,12 @@ function animate () {
     else if (keys.w.pressed && keys.d.pressed) background.position.x = background.position.x - 2, background.position.y = background.position.y + 2
     else if (keys.s.pressed && keys.a.pressed) background.position.x = background.position.x + 2, background.position.y = background.position.y - 2
     else if (keys.s.pressed && keys.d.pressed) background.position.x = background.position.x - 2, background.position.y = background.position.y - 2
-    else if (keys.w.pressed) background.position.y = background.position.y + 3
-    else if (keys.a.pressed) background.position.x = background.position.x + 3
-    else if (keys.s.pressed) background.position.y = background.position.y - 3
-    else if (keys.d.pressed) background.position.x = background.position.x - 3
+    else if (keys.w.pressed) playerY = playerY - 3
+    else if (keys.a.pressed) playerX = playerX - 3
+    else if (keys.s.pressed) playerY = playerY + 3
+    else if (keys.d.pressed) playerX = playerX + 3
 }
-animate()
+/* animate() */
 
 window.addEventListener("keydown", (e) => {
     switch (e.code) {

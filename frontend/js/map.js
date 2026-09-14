@@ -1,3 +1,5 @@
+import { playerX, playerY } from "./player.js"
+
 //Finder canvas elementet i HTML
 let canvas = document.querySelector("canvas")
 
@@ -6,9 +8,6 @@ canvas.width = window.innerWidth
 canvas.height = window.innerHeight
 
 let c = canvas.getContext("2d")
-
-let cameraX = 0
-let cameraY = 0
 
 /* LOAD MAP */
 
@@ -76,6 +75,7 @@ async function loadMap() {
         )
     }
 
+    function renderMap() {
 
     for (const layer of map.layers) {
     //Gå igennem hver værdi i layer.data
@@ -123,6 +123,12 @@ async function loadMap() {
         )
     })
 
+    }
+    }
+
+    function renderMap() {
+        let cameraX = playerX - canvas.width / 2
+        let cameraY = playerY - canvas.height / 2
     }
 
 }
