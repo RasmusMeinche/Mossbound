@@ -13,7 +13,33 @@ async function loadMap() {
     const response = await fetch("./maps/TinyHeroesMap.tmj")
     const map = await response.json()
 
-    console.log(map)
+    async function loadTileset(tileset) {
+
+            //Hent tileset Source
+            const tilesetSource = await fetch("./tileset/" + tileset.source)
+            const response = await tilesetSource.text()
+
+            console.log(response)
+
+            //Konverterer raw input data til et format javaScript kan læse
+            const parser = new DOMParser()
+            const xml = parser.parseFromString(response, "text/xml")
+
+            const tilesetElement = xml.querySelector("tileset")
+            const columns = tilesetElement.getAttribute("columns")
+            const columnNumber = Number(columns)
+            console.log(tilesetElement)
+
+            const tileWidth = Number(tilesetElement.getAttribute("tilewidth"))
+            const tileHeight = Number(tilesetElement.getAttribute("tileheight"))
+
+            const imageElement = xml.querySelector("image")
+            const imageSource = imageElement.getAttribute("source")
+
+            const resolvedImageSource = new URL(imageSource, tilesetSource.url).href
+
+        return {columnNumber, tileWidth, tileHeight, resolvedImageSource}
+    }
 
     //Finder Grass inde i map arrayet
     function grassLayer (layer) {
@@ -23,20 +49,37 @@ async function loadMap() {
     const layer = map.layers.find(grassLayer)
     const tilesets = map.tilesets
 
-    console.log(layer)
-
     function findTileset(gid) {
 
-    let bestCandidate
+        let bestCandidate
 
-    tilesets.forEach((tileset)=> {
+        tilesets.forEach((tileset)=> {
 
-        if (gid >= tileset.firstgid) {
-            bestCandidate = tileset
-        }
-    })
-        console.log(bestCandidate)
+            if (gid >= tileset.firstgid) {
+                bestCandidate = tileset
+            }
+        })
         return bestCandidate
+    }
+
+    const loadedTilesets = []
+
+    for (const tileset of tilesets) {
+        const loadedData = await loadTileset(tileset)
+
+        const image = new Image ()
+        image.src = loadedData.resolvedImageSource
+        await image.decode()
+
+
+        loadedTilesets.push(
+            {tilesetFirstgid: tileset.firstgid,
+            columnNumber: loadedData.columnNumber,
+            tileWidth: loadedData.tileWidth,
+            tileHeight: loadedData.tileHeight,
+            image: image
+            }
+        )
     }
 
     //Gå igennem hver værdi i layer.data
@@ -58,7 +101,28 @@ async function loadMap() {
         console.log(tileset)
 
         const localId = gid - tileset.firstgid
-        console.log(localId)
+
+        const loadedTileset = loadedTilesets.find((item) => {
+        return item.tilesetFirstgid === tileset.firstgid
+        })
+
+        const sourceTileX = localId % loadedTileset.columnNumber
+        const sourceTileY = Math.floor(localId / loadedTileset.columnNumber)
+
+        const sourcePixelX = sourceTileX * loadedTileset.tileWidth
+        const sourcePixelY = sourceTileY * loadedTileset.tileHeight
+
+        c.drawImage(
+            loadedTileset.image,
+            sourcePixelX,
+            sourcePixelY,
+            loadedTileset.tileWidth,
+            loadedTileset.tileHeight,
+            pixelX,
+            pixelY,
+            loadedTileset.tileWidth,
+            loadedTileset.tileHeight
+        )
     })
 
 }
