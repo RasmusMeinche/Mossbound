@@ -1,23 +1,55 @@
-const playerDown = new Image()
-playerDown.src = "./images/playerMovement/PlayerSpriteDown.png"
+const playerRight = new Image()
+playerRight.src = "./images/player/movement/Walk.png"
 
-export let playerX = 1000
-export let playerY = 800
+const playerIdle = new Image()
+playerIdle.src = "./images/player/movement/Idle.png"
 
-class Sprite {
-    constructor({
-        position,
-        image
-    }) {
-        this.position = position
-        this.image = image
+export let playerX = 2000
+export let playerY = 2000
+let frameX = 0
+let frameY = 0
+
+let drawPlayerCounter = 0
+
+export function drawPlayer(c, canvas) {
+    const sourceX = 128 * frameX
+    const sourceY = 128 * frameY
+
+    let currentSprite
+
+    if (keys.d.pressed) {
+        currentSprite = playerRight
+    } else {
+        currentSprite = playerIdle
     }
 
-    draw() {
-        c.drawImage(this.image, this.position.x, this.position.y)
+    c.drawImage(
+        currentSprite,
+
+        sourceX,      // sourceX: s tart ved x = 0 i spritesheetet
+        sourceY,      // sourceY: start ved y = 0 i spritesheetet
+        128,    // sourceWidth: klip 128px i bredden
+        128,    // sourceHeight: klip 128px i højden
+
+        canvas.width / 2 - 64,   // centrer spillerens 128px bredde
+        canvas.height / 2 - 64,  // centrer spillerens 128px højde
+        128,    // tegn framen 128px bred
+        128     // tegn framen 128px høj
+    )
+
+    drawPlayerCounter++
+
+    if (frameX === 14) {
+        frameX = 0
+    }
+
+    if (drawPlayerCounter === 6) {
+        frameX++
+        drawPlayerCounter = 0
     }
 }
 
+ 
 const keys = {
     w: {
         pressed: false
@@ -36,40 +68,25 @@ const keys = {
     }
 }
 
-function animate () {
-    window.requestAnimationFrame(animate)
-    c.drawImage(
-        playerDown,
-        0,
-        0,
-        playerDown.width / 6 + 2,
-        playerDown.height,
-        canvas.width / 2 - (playerDown.width / 6) / 2,
-        canvas.height / 2 - playerDown.height / 2,
-        playerDown.width / 6,
-        playerDown.height
-    )
-
-    //Running
-    if (keys.shift.pressed && keys.w.pressed && keys.a.pressed) background.position.x = background.position.x + 4, background.position.y = background.position.y + 4
-    else if (keys.shift.pressed && keys.w.pressed && keys.d.pressed) background.position.x = background.position.x - 4, background.position.y = background.position.y + 4
-    else if (keys.shift.pressed && keys.s.pressed && keys.a.pressed) background.position.x = background.position.x + 4, background.position.y = background.position.y - 4
-    else if (keys.shift.pressed && keys.s.pressed && keys.d.pressed) background.position.x = background.position.x - 4, background.position.y = background.position.y - 4
-    else if (keys.shift.pressed && keys.w.pressed) background.position.y = background.position.y + 6
-    else if (keys.shift.pressed && keys.a.pressed) background.position.x = background.position.x + 6
-    else if (keys.shift.pressed && keys.s.pressed) background.position.y = background.position.y - 6
-    else if (keys.shift.pressed && keys.d.pressed) background.position.x = background.position.x - 6
+export function updatePlayer() {
+    if (keys.shift.pressed && keys.w.pressed && keys.a.pressed) playerX = playerX - 4, playerY = playerY - 4
+    else if (keys.shift.pressed && keys.w.pressed && keys.d.pressed) playerX = playerX + 4, playerY = playerY - 4
+    else if (keys.shift.pressed && keys.s.pressed && keys.a.pressed) playerX = playerX - 4, playerY = playerY + 4
+    else if (keys.shift.pressed && keys.s.pressed && keys.d.pressed) playerX = playerX + 4, playerY = playerY + 4
+    else if (keys.shift.pressed && keys.w.pressed) playerY = playerY - 6
+    else if (keys.shift.pressed && keys.a.pressed) playerX = playerX - 6
+    else if (keys.shift.pressed && keys.s.pressed) playerY = playerY + 6
+    else if (keys.shift.pressed && keys.d.pressed) playerX = playerX + 6
     // Walking
-    else if (keys.w.pressed && keys.a.pressed) background.position.x = background.position.x + 2, background.position.y = background.position.y + 2
-    else if (keys.w.pressed && keys.d.pressed) background.position.x = background.position.x - 2, background.position.y = background.position.y + 2
-    else if (keys.s.pressed && keys.a.pressed) background.position.x = background.position.x + 2, background.position.y = background.position.y - 2
-    else if (keys.s.pressed && keys.d.pressed) background.position.x = background.position.x - 2, background.position.y = background.position.y - 2
+    else if (keys.w.pressed && keys.a.pressed) playerX = playerX - 2, playerY = playerY - 2
+    else if (keys.w.pressed && keys.d.pressed) playerX = playerX + 2, playerY = playerY - 2
+    else if (keys.s.pressed && keys.a.pressed) playerX = playerX - 2, playerY = playerY + 2
+    else if (keys.s.pressed && keys.d.pressed) playerX = playerX + 2, playerY = playerY + 2
     else if (keys.w.pressed) playerY = playerY - 3
     else if (keys.a.pressed) playerX = playerX - 3
     else if (keys.s.pressed) playerY = playerY + 3
     else if (keys.d.pressed) playerX = playerX + 3
 }
-/* animate() */
 
 window.addEventListener("keydown", (e) => {
     switch (e.code) {
