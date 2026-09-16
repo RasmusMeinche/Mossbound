@@ -1,5 +1,5 @@
-const playerRight = new Image()
-playerRight.src = "./images/player/movement/Walk.png"
+const playerWalk = new Image()
+playerWalk.src = "./images/player/movement/Walk.png"
 
 const playerIdle = new Image()
 playerIdle.src = "./images/player/movement/Idle.png"
@@ -7,7 +7,19 @@ playerIdle.src = "./images/player/movement/Idle.png"
 export let playerX = 2000
 export let playerY = 2000
 let frameX = 0
-let frameY = 0
+let frameY = 3
+
+let direction
+const walkDirection = {
+    east: 0,
+    southeast: 1,
+    south: 2,
+    southwest: 3,
+    west: 4,
+    northwest: 5,
+    north: 6,
+    northeast: 7
+}
 
 let drawPlayerCounter = 0
 
@@ -17,10 +29,36 @@ export function drawPlayer(c, canvas) {
 
     let currentSprite
 
-    if (keys.d.pressed) {
-        currentSprite = playerRight
+    if (keys.w.pressed && keys.d.pressed) {
+        currentSprite = playerWalk
+        direction = "northeast"
+    } else if (keys.w.pressed && keys.a.pressed) {
+        currentSprite = playerWalk
+        direction = "northwest"
+    } else if (keys.s.pressed && keys.a.pressed) {
+        currentSprite = playerWalk
+        direction = "southwest"
+    } else if (keys.s.pressed && keys.d.pressed) {
+        currentSprite = playerWalk
+        direction = "southeast"
+    } else if (keys.w.pressed) {
+        currentSprite = playerWalk
+        direction = "north"
+    } else if (keys.a.pressed) {
+        currentSprite = playerWalk
+        direction = "west"
+    } else if (keys.s.pressed) {
+        currentSprite = playerWalk
+        direction = "south"
+    } else if (keys.d.pressed) {
+        currentSprite = playerWalk
+        direction = "east"
     } else {
         currentSprite = playerIdle
+    }
+
+    if (currentSprite === playerWalk) {
+        frameY = walkDirection[direction]
     }
 
     c.drawImage(
@@ -69,6 +107,10 @@ const keys = {
 }
 
 export function updatePlayer() {
+
+    let moveX = 0
+    let moveY = 0
+
     if (keys.shift.pressed && keys.w.pressed && keys.a.pressed) playerX = playerX - 4, playerY = playerY - 4
     else if (keys.shift.pressed && keys.w.pressed && keys.d.pressed) playerX = playerX + 4, playerY = playerY - 4
     else if (keys.shift.pressed && keys.s.pressed && keys.a.pressed) playerX = playerX - 4, playerY = playerY + 4
