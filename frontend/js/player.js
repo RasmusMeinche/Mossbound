@@ -112,6 +112,13 @@ export function updatePlayer() {
     let moveY = 0
     let speed = 3
 
+    const length = Math.sqrt(moveX**2 + moveY**2)
+
+    if (length > 0) {
+        moveX = moveX / length
+        moveY = moveY / length
+    }
+
     if (keys.d.pressed) {
         moveX = 1
     } else if (keys.a.pressed) {
