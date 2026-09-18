@@ -110,6 +110,21 @@ export function updatePlayer() {
 
     let moveX = 0
     let moveY = 0
+    let speed = 3
+
+    if (keys.d.pressed) {
+        moveX = 1
+    } else if (keys.a.pressed) {
+        moveX = -1
+    }
+    playerX = playerX + (moveX * speed)
+
+    if (keys.w.pressed) {
+        moveY = -1
+    } else if (keys.s.pressed) {
+        moveY = 1
+    }
+    playerY = playerY + (moveY * speed)
 
     if (keys.shift.pressed && keys.w.pressed && keys.a.pressed) playerX = playerX - 4, playerY = playerY - 4
     else if (keys.shift.pressed && keys.w.pressed && keys.d.pressed) playerX = playerX + 4, playerY = playerY - 4
