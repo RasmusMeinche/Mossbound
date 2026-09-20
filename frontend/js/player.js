@@ -4,6 +4,9 @@ playerWalk.src = "./images/player/movement/Walk.png"
 const playerIdle = new Image()
 playerIdle.src = "./images/player/movement/Idle.png"
 
+const playerRun = new Image()
+playerRun.src = "./images/player/movement/Run.png"
+
 export let playerX = 2000
 export let playerY = 2000
 let frameX = 0
@@ -24,8 +27,6 @@ const walkDirection = {
 let drawPlayerCounter = 0
 
 export function drawPlayer(c, canvas) {
-    const sourceX = 128 * frameX
-    const sourceY = 128 * frameY
 
     let currentSprite
 
@@ -60,6 +61,9 @@ export function drawPlayer(c, canvas) {
     if (currentSprite === playerWalk) {
         frameY = walkDirection[direction]
     }
+
+    const sourceX = 128 * frameX
+    const sourceY = 128 * frameY
 
     c.drawImage(
         currentSprite,
@@ -106,17 +110,14 @@ const keys = {
     }
 }
 
-export function updatePlayer() {
+export function updatePlayer(deltaTime) {
 
     let moveX = 0
     let moveY = 0
-    let speed = 3
+    let speed = 180
 
-    const length = Math.sqrt(moveX**2 + moveY**2)
-
-    if (length > 0) {
-        moveX = moveX / length
-        moveY = moveY / length
+    if (keys.shift.pressed) {
+        speed = 360
     }
 
     if (keys.d.pressed) {
@@ -124,32 +125,22 @@ export function updatePlayer() {
     } else if (keys.a.pressed) {
         moveX = -1
     }
-    playerX = playerX + (moveX * speed)
 
     if (keys.w.pressed) {
         moveY = -1
     } else if (keys.s.pressed) {
         moveY = 1
     }
-    playerY = playerY + (moveY * speed)
 
-    if (keys.shift.pressed && keys.w.pressed && keys.a.pressed) playerX = playerX - 4, playerY = playerY - 4
-    else if (keys.shift.pressed && keys.w.pressed && keys.d.pressed) playerX = playerX + 4, playerY = playerY - 4
-    else if (keys.shift.pressed && keys.s.pressed && keys.a.pressed) playerX = playerX - 4, playerY = playerY + 4
-    else if (keys.shift.pressed && keys.s.pressed && keys.d.pressed) playerX = playerX + 4, playerY = playerY + 4
-    else if (keys.shift.pressed && keys.w.pressed) playerY = playerY - 6
-    else if (keys.shift.pressed && keys.a.pressed) playerX = playerX - 6
-    else if (keys.shift.pressed && keys.s.pressed) playerY = playerY + 6
-    else if (keys.shift.pressed && keys.d.pressed) playerX = playerX + 6
-    // Walking
-    else if (keys.w.pressed && keys.a.pressed) playerX = playerX - 2, playerY = playerY - 2
-    else if (keys.w.pressed && keys.d.pressed) playerX = playerX + 2, playerY = playerY - 2
-    else if (keys.s.pressed && keys.a.pressed) playerX = playerX - 2, playerY = playerY + 2
-    else if (keys.s.pressed && keys.d.pressed) playerX = playerX + 2, playerY = playerY + 2
-    else if (keys.w.pressed) playerY = playerY - 3
-    else if (keys.a.pressed) playerX = playerX - 3
-    else if (keys.s.pressed) playerY = playerY + 3
-    else if (keys.d.pressed) playerX = playerX + 3
+    // Pythagoras beregner længden af movement-vectoren
+    const length = Math.sqrt(moveX**2 + moveY**2)
+
+    if (length > 0) {
+        moveX = moveX / length
+        moveY = moveY / length
+        playerX = playerX + (moveX * speed * deltaTime)
+        playerY = playerY + (moveY * speed * deltaTime)
+    }
 }
 
 window.addEventListener("keydown", (e) => {
@@ -170,7 +161,6 @@ window.addEventListener("keydown", (e) => {
             keys.shift.pressed = true
         break
     }
-    console.log(keys)
 })
 
 window.addEventListener("keyup", (e) => {

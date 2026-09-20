@@ -13,13 +13,28 @@ let c = canvas.getContext("2d")
 async function startGame() {
     await loadMap()
 
-    gameLoop()
+    window.requestAnimationFrame(gameLoop)
 }
 
-function gameLoop() {
+let lastTime = 0
+
+function gameLoop(currentTime) {
+
     window.requestAnimationFrame(gameLoop)
 
-    updatePlayer()
+    if (lastTime === 0) {
+        lastTime = currentTime
+
+        return
+    }
+
+    //Finder forskellen mellem de to og dividerer det med 1000 for at omregne millisekunder til sekunder
+    let deltaTime = (currentTime - lastTime) / 1000
+
+    lastTime = currentTime
+
+
+    updatePlayer(deltaTime)
     renderMap(c, canvas)
     drawPlayer(c, canvas)
 }
