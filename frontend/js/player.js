@@ -30,32 +30,13 @@ export function drawPlayer(c, canvas) {
 
     let currentSprite
 
-    if (keys.w.pressed && keys.d.pressed) {
+
+    if (keys.shift.pressed && keys.w.pressed || keys.shift.pressed && keys.a.pressed || keys.shift.pressed && keys.s.pressed || keys.shift.pressed && keys.d.pressed) {
+        currentSprite = playerRun
+    } else if (keys.w.pressed || keys.a.pressed || keys.s.pressed || keys.d.pressed) {
         currentSprite = playerWalk
-        direction = "northeast"
-    } else if (keys.w.pressed && keys.a.pressed) {
-        currentSprite = playerWalk
-        direction = "northwest"
-    } else if (keys.s.pressed && keys.a.pressed) {
-        currentSprite = playerWalk
-        direction = "southwest"
-    } else if (keys.s.pressed && keys.d.pressed) {
-        currentSprite = playerWalk
-        direction = "southeast"
-    } else if (keys.w.pressed) {
-        currentSprite = playerWalk
-        direction = "north"
-    } else if (keys.a.pressed) {
-        currentSprite = playerWalk
-        direction = "west"
-    } else if (keys.s.pressed) {
-        currentSprite = playerWalk
-        direction = "south"
-    } else if (keys.d.pressed) {
-        currentSprite = playerWalk
-        direction = "east"
     } else {
-        currentSprite = playerIdle
+    currentSprite = playerIdle
     }
 
     if (currentSprite === playerWalk) {
@@ -120,16 +101,51 @@ export function updatePlayer(deltaTime) {
         speed = 360
     }
 
-    if (keys.d.pressed) {
+    if (keys.d.pressed && keys.a.pressed) {
+
+        if (lastHorizontalKey === "a") {
+            moveX = -1
+        } else if (lastHorizontalKey === "d") {
+            moveX = 1
+        }
+
+    } else if (keys.d.pressed) {
         moveX = 1
     } else if (keys.a.pressed) {
         moveX = -1
     }
+        
+    if (keys.w.pressed && keys.s.pressed) {
 
-    if (keys.w.pressed) {
+        if (lastVerticalKey === "w") {
+            moveY = -1
+        } else if (lastVerticalKey === "s") {
+            moveY = 1
+        }
+
+    } else if (keys.w.pressed) {
         moveY = -1
     } else if (keys.s.pressed) {
         moveY = 1
+    }
+
+
+    if  (moveX === 1 && moveY === 1) {
+        direction = "southeast"
+    } else if (moveX === -1 && moveY === -1) {
+        direction = "northwest"
+    } else if (moveX === 1 && moveY === -1) {
+        direction = "northeast"
+    } else if (moveX === -1 && moveY === 1) {
+        direction = "southwest"
+    } else if (moveX === 1) {
+        direction = "east"
+    } else if (moveX === -1) {
+        direction = "west"
+    } else if (moveY === 1) {
+        direction = "south"
+    } else if (moveY === -1) {
+        direction = "north"
     }
 
     // Pythagoras beregner længden af movement-vectoren
@@ -143,19 +159,26 @@ export function updatePlayer(deltaTime) {
     }
 }
 
+let lastHorizontalKey
+let lastVerticalKey
+
 window.addEventListener("keydown", (e) => {
     switch (e.code) {
         case "KeyW":
             keys.w.pressed = true
+            lastVerticalKey = "w"
         break
         case "KeyA":
             keys.a.pressed = true
+            lastHorizontalKey = "a"
         break
         case "KeyS":
             keys.s.pressed = true
+            lastVerticalKey = "s"
         break
         case "KeyD":
             keys.d.pressed = true
+            lastHorizontalKey = "d"
         break
         case "ShiftLeft":
             keys.shift.pressed = true
