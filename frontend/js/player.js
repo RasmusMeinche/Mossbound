@@ -9,6 +9,13 @@ playerRun.src = "./images/player/movement/Run.png"
 
 export let playerX = 2000
 export let playerY = 2000
+
+let playerHitBox = {
+    centerX: playerX,
+    centerY: playerY + 20,
+    radius: 30
+    }
+
 let frameX = 0
 let frameY = 3
 
@@ -64,6 +71,19 @@ export function drawPlayer(c, canvas, deltaTime) {
         128,    // tegn framen 128px bred
         128     // tegn framen 128px høj
     )
+
+    c.beginPath()
+
+    c.arc(
+        canvas.width / 2,
+        canvas.height / 2 + 20,
+        30,
+        0,
+        Math.PI * 2
+    )
+
+    c.stroke()
+
 
     animationTimer = animationTimer + deltaTime
 
@@ -171,6 +191,9 @@ export function updatePlayer(deltaTime) {
         moveY = moveY / length
         playerX = playerX + (moveX * speed * deltaTime)
         playerY = playerY + (moveY * speed * deltaTime)
+
+        playerHitBox.centerX = playerX
+        playerHitBox.centerY = playerY + 20
     }
 }
 
