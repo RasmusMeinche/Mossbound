@@ -30,16 +30,21 @@ export function drawPlayer(c, canvas) {
 
     let currentSprite
 
+    const isMoving =
+        keys.w.pressed ||
+        keys.a.pressed ||
+        keys.s.pressed ||
+        keys.d.pressed
 
-    if (keys.shift.pressed && keys.w.pressed || keys.shift.pressed && keys.a.pressed || keys.shift.pressed && keys.s.pressed || keys.shift.pressed && keys.d.pressed) {
+    if (keys.shift.pressed && isMoving) {
         currentSprite = playerRun
-    } else if (keys.w.pressed || keys.a.pressed || keys.s.pressed || keys.d.pressed) {
+    } else if (isMoving) {
         currentSprite = playerWalk
     } else {
     currentSprite = playerIdle
     }
 
-    if (currentSprite === playerWalk) {
+    if (currentSprite === playerWalk || currentSprite === playerRun) {
         frameY = walkDirection[direction]
     }
 
