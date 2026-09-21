@@ -24,9 +24,9 @@ const walkDirection = {
     northeast: 7
 }
 
-let drawPlayerCounter = 0
+let animationTimer = 0
 
-export function drawPlayer(c, canvas) {
+export function drawPlayer(c, canvas, deltaTime) {
 
     let currentSprite
 
@@ -65,15 +65,25 @@ export function drawPlayer(c, canvas) {
         128     // tegn framen 128px høj
     )
 
-    drawPlayerCounter++
+    animationTimer = animationTimer + deltaTime
 
-    if (frameX === 14) {
-        frameX = 0
+    let frameDuration
+
+    if (currentSprite === playerIdle) {
+        frameDuration = 0.13
+    } else if (currentSprite === playerWalk) {
+        frameDuration = 0.09
+    } else if (currentSprite === playerRun) {
+        frameDuration = 0.05
     }
 
-    if (drawPlayerCounter === 6) {
+    if (animationTimer >= frameDuration) {
         frameX++
-        drawPlayerCounter = 0
+        animationTimer = 0
+    }
+
+    if (frameX > 14) {
+        frameX = 0
     }
 }
 

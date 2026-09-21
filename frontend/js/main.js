@@ -36,7 +36,7 @@ function gameLoop(currentTime) {
 
     updatePlayer(deltaTime)
     renderMap(c, canvas)
-    drawPlayer(c, canvas)
+    drawPlayer(c, canvas, deltaTime)
 }
 
 startGame()
