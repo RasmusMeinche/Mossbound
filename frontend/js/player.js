@@ -13,8 +13,16 @@ export let playerY = 2000
 let playerHitBox = {
     centerX: playerX,
     centerY: playerY + 20,
-    radius: 30
+    radius: 25
     }
+
+let testHitBox = {
+    centerX: 2200,
+    centerY: 2200,
+    radius: 40
+}
+// Udregner forskellen mellem spiller 
+let distanceX
 
 let frameX = 0
 let frameY = 3
@@ -77,7 +85,7 @@ export function drawPlayer(c, canvas, deltaTime) {
     c.arc(
         canvas.width / 2,
         canvas.height / 2 + 20,
-        30,
+        playerHitBox.radius,
         0,
         Math.PI * 2
     )
