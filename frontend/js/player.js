@@ -80,12 +80,27 @@ export function drawPlayer(c, canvas, deltaTime) {
         128     // tegn framen 128px høj
     )
 
+    const testScreenX = canvas.width / 2 + (testHitBox.centerX - playerX)
+    const testScreenY = canvas.height / 2 + (testHitBox.centerY - playerY)
+
     c.beginPath()
 
     c.arc(
         canvas.width / 2,
         canvas.height / 2 + 20,
         playerHitBox.radius,
+        0,
+        Math.PI * 2
+    )
+
+    c.stroke()
+    
+    c.beginPath()
+
+    c.arc(
+        testScreenX,
+        testScreenY,
+        testHitBox.radius,
         0,
         Math.PI * 2
     )
@@ -131,6 +146,18 @@ const keys = {
     },
     shift: {
         pressed: false
+    }
+}
+
+function checkCollision() {
+    let distanceBetweenCenterX = testHitBox.centerX - playerHitBox.centerX
+    let distanceBetweenCenterY = testHitBox.centerY - playerHitBox.centerY
+
+    const length = Math.sqrt(distanceBetweenCenterX**2 + distanceBetweenCenterY**2)
+    const sumOfRadius = playerHitBox.radius + testHitBox.radius
+
+    if (length <= sumOfRadius) {
+        console.log("Collision!")
     }
 }
 
@@ -203,6 +230,8 @@ export function updatePlayer(deltaTime) {
         playerHitBox.centerX = playerX
         playerHitBox.centerY = playerY + 20
     }
+
+    checkCollision()
 }
 
 let lastHorizontalKey
