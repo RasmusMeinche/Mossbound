@@ -14,7 +14,7 @@ let playerHitBox = {
     centerX: playerX,
     centerY: playerY + 20,
     radius: 25
-    }
+}
 
 let testHitBox = {
     centerX: 2200,
@@ -56,7 +56,7 @@ export function drawPlayer(c, canvas, deltaTime) {
     } else if (isMoving) {
         currentSprite = playerWalk
     } else {
-    currentSprite = playerIdle
+        currentSprite = playerIdle
     }
 
     if (currentSprite === playerWalk || currentSprite === playerRun) {
@@ -94,7 +94,7 @@ export function drawPlayer(c, canvas, deltaTime) {
     )
 
     c.stroke()
-    
+
     c.beginPath()
 
     c.arc(
@@ -130,7 +130,7 @@ export function drawPlayer(c, canvas, deltaTime) {
     }
 }
 
- 
+
 const keys = {
     w: {
         pressed: false
@@ -149,15 +149,17 @@ const keys = {
     }
 }
 
-function checkCollision() {
-    let distanceBetweenCenterX = testHitBox.centerX - playerHitBox.centerX
-    let distanceBetweenCenterY = testHitBox.centerY - playerHitBox.centerY
+function checkCollision(nextHitBoxX, nextHitBoxY) {
+    let distanceBetweenCenterX = testHitBox.centerX - nextHitBoxX
+    let distanceBetweenCenterY = testHitBox.centerY - nextHitBoxY
 
-    const length = Math.sqrt(distanceBetweenCenterX**2 + distanceBetweenCenterY**2)
+    const length = Math.sqrt(distanceBetweenCenterX ** 2 + distanceBetweenCenterY ** 2)
     const sumOfRadius = playerHitBox.radius + testHitBox.radius
 
     if (length <= sumOfRadius) {
-        console.log("Collision!")
+        return true
+    } else {
+        return false
     }
 }
 
@@ -184,7 +186,7 @@ export function updatePlayer(deltaTime) {
     } else if (keys.a.pressed) {
         moveX = -1
     }
-        
+
     if (keys.w.pressed && keys.s.pressed) {
 
         if (lastVerticalKey === "w") {
@@ -200,7 +202,7 @@ export function updatePlayer(deltaTime) {
     }
 
 
-    if  (moveX === 1 && moveY === 1) {
+    if (moveX === 1 && moveY === 1) {
         direction = "southeast"
     } else if (moveX === -1 && moveY === -1) {
         direction = "northwest"
@@ -219,13 +221,49 @@ export function updatePlayer(deltaTime) {
     }
 
     // Pythagoras beregner længden af movement-vectoren
-    const length = Math.sqrt(moveX**2 + moveY**2)
+    const length = Math.sqrt(moveX ** 2 + moveY ** 2)
 
     if (length > 0) {
         moveX = moveX / length
         moveY = moveY / length
-        playerX = playerX + (moveX * speed * deltaTime)
-        playerY = playerY + (moveY * speed * deltaTime)
+        
+        const nextX = playerX + (moveX * speed * deltaTime)
+        const nextY = playerY + (moveY * speed * deltaTime)
+
+        const nextHitBoxX = nextX
+        const nextHitBoxY = nextY + 20
+
+        const isCollidingX = checkCollision(nextHitBoxX, playerHitBox.centerY)
+
+        const normalX = playerHitBox.centerX - testHitBox.centerX
+        const normalY = playerHitBox.centerY - testHitBox.centerY
+
+        const normalLength = Math.sqrt(normalX ** 2 + normalY ** 2)
+
+        if (normalLength > 0) {
+            const normalizedX = normalX / normalLength
+            const normalizedY = normalY / normalLength
+
+            const dotProduct = moveX*normalizedX+moveY*normalizedY
+        }
+
+        if (dotProduct < 0) {
+
+        }
+
+        if (!isCollidingX) {
+            playerX = nextX
+
+            playerHitBox.centerX = nextHitBoxX
+        }
+
+        const isCollidingY = checkCollision(playerHitBox.centerX, nextHitBoxY)
+
+        if (!isCollidingY) {
+            playerY = nextY
+
+            playerHitBox.centerY = nextHitBoxY
+        }
 
         playerHitBox.centerX = playerX
         playerHitBox.centerY = playerY + 20
@@ -242,22 +280,22 @@ window.addEventListener("keydown", (e) => {
         case "KeyW":
             keys.w.pressed = true
             lastVerticalKey = "w"
-        break
+            break
         case "KeyA":
             keys.a.pressed = true
             lastHorizontalKey = "a"
-        break
+            break
         case "KeyS":
             keys.s.pressed = true
             lastVerticalKey = "s"
-        break
+            break
         case "KeyD":
             keys.d.pressed = true
             lastHorizontalKey = "d"
-        break
+            break
         case "ShiftLeft":
             keys.shift.pressed = true
-        break
+            break
     }
 })
 
@@ -265,19 +303,18 @@ window.addEventListener("keyup", (e) => {
     switch (e.code) {
         case "KeyW":
             keys.w.pressed = false
-        break
+            break
         case "KeyA":
             keys.a.pressed = false
-        break
+            break
         case "KeyS":
             keys.s.pressed = false
-        break
+            break
         case "KeyD":
             keys.d.pressed = false
-        break
+            break
         case "ShiftLeft":
             keys.shift.pressed = false
-        break
+            break
     }
 })
-        
