@@ -248,7 +248,11 @@ export function updatePlayer(deltaTime) {
         }
 
         if (dotProduct < 0) {
+            const slideX = moveX - (dotProduct * normalizedX)
+            const slideY= moveY - (dotProduct * normalizedY)
 
+            const nextSlideX = playerX + (slideX * speed * deltaTime)
+            const nextSlideY = playerY + (slideY * speed * deltaTime)
         }
 
         if (!isCollidingX) {
