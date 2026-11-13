@@ -233,47 +233,48 @@ export function updatePlayer(deltaTime) {
         const nextHitBoxX = nextX
         const nextHitBoxY = nextY + 20
 
-        const isCollidingX = checkCollision(nextHitBoxX, playerHitBox.centerY)
+        const isColliding = checkCollision(nextHitBoxX, nextHitBoxY)
 
         const normalX = playerHitBox.centerX - testHitBox.centerX
         const normalY = playerHitBox.centerY - testHitBox.centerY
 
         const normalLength = Math.sqrt(normalX ** 2 + normalY ** 2)
 
-        if (normalLength > 0) {
-            const normalizedX = normalX / normalLength
-            const normalizedY = normalY / normalLength
-
-            const dotProduct = moveX*normalizedX+moveY*normalizedY
-        }
-
-        if (dotProduct < 0) {
-            const slideX = moveX - (dotProduct * normalizedX)
-            const slideY= moveY - (dotProduct * normalizedY)
-
-            const nextSlideX = playerX + (slideX * speed * deltaTime)
-            const nextSlideY = playerY + (slideY * speed * deltaTime)
-        }
-
-        if (!isCollidingX) {
+        if (!isColliding) {
             playerX = nextX
-
-            playerHitBox.centerX = nextHitBoxX
-        }
-
-        const isCollidingY = checkCollision(playerHitBox.centerX, nextHitBoxY)
-
-        if (!isCollidingY) {
             playerY = nextY
 
+            playerHitBox.centerX = nextHitBoxX
             playerHitBox.centerY = nextHitBoxY
+        } else {
+            if (normalLength > 0) {
+                const normalizedX = normalX / normalLength
+                const normalizedY = normalY / normalLength
+
+                const dotProduct = moveX*normalizedX+moveY*normalizedY
+
+            if (dotProduct < 0) {
+                const slideX = moveX - (dotProduct * normalizedX)
+                const slideY = moveY - (dotProduct * normalizedY)
+    
+                const nextSlideX = playerX + (slideX * speed * deltaTime)
+                const nextSlideY = playerY + (slideY * speed * deltaTime)
+    
+                const isSlideColliding = checkCollision(nextSlideX, nextSlideY + 20)
+    
+                if(!isSlideColliding) {
+                    playerX = nextSlideX
+                    playerY = nextSlideY
+                    playerHitBox.centerX = nextSlideX
+                    playerHitBox.centerY = nextSlideY + 20
+                }
+            }
+        }
         }
 
         playerHitBox.centerX = playerX
         playerHitBox.centerY = playerY + 20
     }
-
-    checkCollision()
 }
 
 let lastHorizontalKey
